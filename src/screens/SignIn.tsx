@@ -1,7 +1,7 @@
 import { Center, Heading, Image, Text, VStack } from "native-base";
-import React from "react";
 import Background from "../assets/background.png";
 import LogoSvg from "../assets/logo.svg";
+import Button from "../components/Button";
 import Input from "../components/Input";
 
 export default function SignIn() {
@@ -34,7 +34,11 @@ export default function SignIn() {
         />
 
         <Input placeholder="Senha" secureTextEntry />
+
+        <Button title="Acessar" />
       </Center>
+
+      <Button title="Criar conta" variant="outline" />
     </VStack>
   );
 }
