@@ -4,8 +4,9 @@ import {
   useFonts,
 } from "@expo-google-fonts/roboto";
 import { NativeBaseProvider } from "native-base";
-import { StatusBar, Text } from "react-native";
+import { StatusBar } from "react-native";
 import Loading from "./src/components/Loading";
+import SignUp from "./src/screens/SignUp";
 import { THEME } from "./src/theme";
 
 export default function App() {
@@ -18,13 +19,7 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      {fontsLoaded ? (
-        <Text style={{ fontFamily: "Roboto_700Bold" }}>
-          Open up App.tsx to start working on your app!
-        </Text>
-      ) : (
-        <Loading />
-      )}
+      {fontsLoaded ? <SignUp /> : <Loading />}
     </NativeBaseProvider>
   );
 }
