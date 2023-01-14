@@ -6,7 +6,7 @@ import {
 import { NativeBaseProvider } from "native-base";
 import { StatusBar } from "react-native";
 import Loading from "./src/components/Loading";
-import SignUp from "./src/screens/SignUp";
+import { Routes } from "./src/routes";
 import { THEME } from "./src/theme";
 
 export default function App() {
@@ -19,7 +19,7 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      {fontsLoaded ? <SignUp /> : <Loading />}
+      {fontsLoaded ? <Routes /> : <Loading />}
     </NativeBaseProvider>
   );
 }
