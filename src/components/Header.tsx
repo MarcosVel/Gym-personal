@@ -1,5 +1,7 @@
-import { Heading, HStack, Text, VStack } from "native-base";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Heading, HStack, Text, VStack, Icon } from "native-base";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import UserPhoto from "./UserPhoto";
 
 export default function Header() {
@@ -12,7 +14,7 @@ export default function Header() {
         mr={4}
       />
 
-      <VStack>
+      <VStack flex={1}>
         <Text color="gray.100" fontSize="md">
           Olá,
         </Text>
@@ -20,6 +22,10 @@ export default function Header() {
           Marcos
         </Heading>
       </VStack>
+
+      <TouchableOpacity>
+        <Icon as={MaterialIcons} name="logout" color="gray.200" size={7} />
+      </TouchableOpacity>
     </HStack>
   );
 }
