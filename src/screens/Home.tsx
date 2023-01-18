@@ -1,13 +1,27 @@
-import { VStack } from "native-base";
+import { HStack, VStack } from "native-base";
+import { useState } from "react";
 import Group from "../components/Group";
 import Header from "../components/Header";
 
 export default function Home() {
+  const [groupSelected, setGroupSelected] = useState("costas");
+
   return (
     <VStack flex={1}>
       <Header />
 
-      <Group name="Grupo" />
+      <HStack>
+        <Group
+          name="costas"
+          isActive={groupSelected === "costas"}
+          onPress={() => setGroupSelected("costas")}
+        />
+        <Group
+          name="ombro"
+          isActive={groupSelected === "ombro"}
+          onPress={() => setGroupSelected("ombro")}
+        />
+      </HStack>
     </VStack>
   );
 }

@@ -3,9 +3,10 @@ import React from "react";
 
 type Props = IPressableProps & {
   name: string;
+  isActive: boolean;
 };
 
-export default function Group({ name, ...rest }: Props) {
+export default function Group({ name, isActive, ...rest }: Props) {
   return (
     <Pressable
       mr={3}
@@ -16,10 +17,16 @@ export default function Group({ name, ...rest }: Props) {
       justifyContent="center"
       alignItems="center"
       overflow="hidden"
+      borderWidth={1}
+      borderColor="gray.600"
+      isPressed={isActive}
+      _pressed={{
+        borderColor: "green.500",
+      }}
       {...rest}
     >
       <Text
-        color="gray.200"
+        color={isActive ? "green.500" : "gray.200"}
         textTransform="uppercase"
         fontSize="xs"
         fontWeight="bold"
