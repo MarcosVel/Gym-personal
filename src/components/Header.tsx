@@ -6,7 +6,7 @@ import UserPhoto from "./UserPhoto";
 
 export default function Header() {
   return (
-    <HStack bg="gray.600" pt={12} pb={5} px={8} alignItems="center">
+    <HStack bg="gray.600" pt={5} pb={5} px={8} alignItems="center">
       <UserPhoto
         source={{ uri: "https://github.com/MarcosVel.png" }}
         size={16}
