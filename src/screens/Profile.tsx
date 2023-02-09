@@ -1,6 +1,8 @@
-import { Center, ScrollView, Skeleton, VStack } from "native-base";
+import { Center, ScrollView, Skeleton, Text, VStack } from "native-base";
 import { useState } from "react";
+import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Input from "../components/Input";
 import ScreenHeader from "../components/ScreenHeader";
 import UserPhoto from "../components/UserPhoto";
 
@@ -31,6 +33,37 @@ export default function Profile() {
                 size={PHOTO_SIZE}
               />
             )}
+
+            <TouchableOpacity>
+              <Text
+                color="green.500"
+                fontFamily="heading"
+                fontSize="md"
+                mt={3}
+                mb={8}
+              >
+                Alterar foto
+              </Text>
+            </TouchableOpacity>
+
+            <Input
+              placeholder="Nome"
+              bg="gray.600"
+              _focus={{
+                bg: "gray.600",
+                borderColor: "green.500",
+              }}
+            />
+
+            <Input
+              placeholder="E-mail"
+              bg="gray.600"
+              _focus={{
+                bg: "gray.600",
+                borderColor: "green.500",
+              }}
+              isDisabled
+            />
           </Center>
         </ScrollView>
       </VStack>
