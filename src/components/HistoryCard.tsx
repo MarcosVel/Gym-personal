@@ -13,7 +13,12 @@ export default function HistoryCard() {
       justifyContent="space-between"
     >
       <VStack mr={5}>
-        <Heading color="white" fontSize="md" textTransform="capitalize">
+        <Heading
+          color="white"
+          fontSize="md"
+          fontFamily="heading"
+          textTransform="capitalize"
+        >
           Costas
         </Heading>
 

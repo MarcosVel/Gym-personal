@@ -4,7 +4,6 @@ import {
 } from "@react-navigation/bottom-tabs";
 
 import { useTheme } from "native-base";
-import { Platform } from "react-native";
 
 import HistorySvg from "../assets/history.svg";
 import HomeSvg from "../assets/home.svg";
@@ -40,9 +39,9 @@ export function AppRoutes() {
         tabBarStyle: {
           backgroundColor: colors.gray[600],
           borderTopWidth: 0,
-          height: Platform.OS === "android" ? "auto" : 96,
-          paddingTop: sizes[8],
-          paddingBottom: sizes[8],
+          height: 64,
+          paddingTop: sizes[2],
+          paddingBottom: sizes[2],
         },
       }}
     >
