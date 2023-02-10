@@ -1,7 +1,15 @@
-import { Center, ScrollView, Skeleton, Text, VStack } from "native-base";
+import {
+  Center,
+  Heading,
+  ScrollView,
+  Skeleton,
+  Text,
+  VStack,
+} from "native-base";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Button from "../components/Button";
 import Input from "../components/Input";
 import ScreenHeader from "../components/ScreenHeader";
 import UserPhoto from "../components/UserPhoto";
@@ -65,6 +73,22 @@ export default function Profile() {
               isDisabled
             />
           </Center>
+
+          <VStack px={10} mt={12} mb={9}>
+            <Heading color="gray.200" fontSize="md" fontFamily="heading" mb={2}>
+              Alterar senha
+            </Heading>
+
+            <Input placeholder="Senha antiga" bg="gray.600" secureTextEntry />
+            <Input placeholder="Senha nova" bg="gray.600" secureTextEntry />
+            <Input
+              placeholder="Confirme nova senha"
+              bg="gray.600"
+              secureTextEntry
+            />
+
+            <Button title="Atualizar" mt={4} />
+          </VStack>
         </ScrollView>
       </VStack>
     </SafeAreaView>

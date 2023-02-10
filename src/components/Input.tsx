@@ -8,6 +8,7 @@ export default function Input({ ...rest }: IInputProps) {
       h={14}
       px={4}
       borderColor="gray.700"
+      rounded="md"
       fontSize="md"
       color="gray.100"
       fontFamily="body"
