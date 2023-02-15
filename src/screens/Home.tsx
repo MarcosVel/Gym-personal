@@ -1,9 +1,11 @@
+import { useNavigation } from "@react-navigation/native";
 import { FlatList, Heading, HStack, Text, VStack } from "native-base";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ExerciseCard from "../components/ExerciseCard";
 import Group from "../components/Group";
 import Header from "../components/Header";
+import { AppNavigatorRoutesProps } from "../routes/app.routes";
 
 export default function Home() {
   const [groups, setGroups] = useState([
@@ -19,6 +21,12 @@ export default function Home() {
     "Remada unilateral",
     "Levantamento terra",
   ]);
+
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
+  function handleOpenExerciseDetails() {
+    navigation.navigate("exercise");
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -57,7 +65,9 @@ export default function Home() {
           <FlatList
             data={exercises}
             keyExtractor={(item, index) => item + index}
-            renderItem={({ item }) => <ExerciseCard title={item} />}
+            renderItem={({ item }) => (
+              <ExerciseCard title={item} onPress={handleOpenExerciseDetails} />
+            )}
             contentContainerStyle={{ paddingBottom: 24 }}
             showsVerticalScrollIndicator={false}
           />
