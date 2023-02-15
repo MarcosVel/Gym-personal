@@ -13,11 +13,16 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import ScreenHeader from "../components/ScreenHeader";
 import UserPhoto from "../components/UserPhoto";
+import * as ImagePicker from "expo-image-picker";
 
 const PHOTO_SIZE = 33;
 
 export default function Profile() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
+
+  async function handleUserPhotoSelect() {
+    await ImagePicker.launchImageLibraryAsync();
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -42,7 +47,7 @@ export default function Profile() {
               />
             )}
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleUserPhotoSelect}>
               <Text
                 color="green.500"
                 fontFamily="heading"
