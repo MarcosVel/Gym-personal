@@ -19,14 +19,33 @@ const PHOTO_SIZE = 33;
 
 export default function Profile() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
+  const [userPhoto, setUserPhoto] = useState(
+    "https://github.com/MarcosVel.png"
+  );
 
   async function handleUserPhotoSelect() {
-    await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-      aspect: [4, 4],
-      allowsEditing: true,
-    });
+    try {
+      const photoSelected = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        aspect: [4, 4],
+        allowsEditing: true,
+      });
+
+      setPhotoIsLoading(true);
+
+      console.log(photoSelected);
+
+      if (photoSelected.canceled) return;
+
+      if (photoSelected.assets[0].uri) {
+        setUserPhoto(photoSelected.assets[0].uri);
+      }
+    } catch (error) {
+      console.log("Error in handleUserPhotoSelect: ", error);
+    } finally {
+      setPhotoIsLoading(false);
+    }
   }
 
   return (
@@ -46,7 +65,7 @@ export default function Profile() {
               />
             ) : (
               <UserPhoto
-                source={{ uri: "https://github.com/MarcosVel.png" }}
+                source={{ uri: userPhoto }}
                 alt="User photo"
                 size={PHOTO_SIZE}
               />
