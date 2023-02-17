@@ -4,6 +4,7 @@ import {
   ScrollView,
   Skeleton,
   Text,
+  useToast,
   VStack,
 } from "native-base";
 import { useState } from "react";
@@ -23,6 +24,7 @@ export default function Profile() {
   const [userPhoto, setUserPhoto] = useState(
     "https://github.com/MarcosVel.png"
   );
+  const toast = useToast();
 
   async function handleUserPhotoSelect() {
     try {
@@ -44,17 +46,18 @@ export default function Profile() {
 
         // divided 2x to convert bytes to mb
         if (photoInfo.size && photoInfo.size / 1024 / 1024 > 5) {
-          return Alert.alert(
-            "Essa imagem é muito grande.",
-            "Escolha uma de até 5MB."
-          );
+          return toast.show({
+            title: "Essa imagem é muito grande.",
+            description: "Escolha uma de até 5MB.",
+            placement: "top",
+          });
         }
-        console.log(photoInfo);
 
         setUserPhoto(photoSelected.assets[0].uri);
       }
     } catch (error) {
       console.log("Error in handleUserPhotoSelect: ", error);
+      toast.show({ title: "Erro ao alterar a foto", bgColor: "red.500" });
     } finally {
       setPhotoIsLoading(false);
     }
