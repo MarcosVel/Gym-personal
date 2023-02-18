@@ -147,7 +147,7 @@ export default function SignUp() {
         <Button
           title="Voltar para o login"
           variant="outline"
-          mt={24}
+          mt={8}
           onPress={() => navigation.goBack()}
         />
       </VStack>
