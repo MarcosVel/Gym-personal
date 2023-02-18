@@ -15,7 +15,18 @@ type FormDataProps = {
 
 export default function SignUp() {
   const navigation = useNavigation();
-  const { control, handleSubmit } = useForm<FormDataProps>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormDataProps>({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      password_confirm: "",
+    },
+  });
 
   function handleSignUp({
     name,
@@ -56,14 +67,26 @@ export default function SignUp() {
           <Controller
             control={control}
             name="name"
+            rules={{
+              required: "Nome obrigatório",
+            }}
             render={({ field: { onChange, value } }) => (
               <Input placeholder="Nome" onChangeText={onChange} value={value} />
             )}
           />
 
+          <Text color="white">{errors.name?.message}</Text>
+
           <Controller
             control={control}
             name="email"
+            rules={{
+              required: "E-mail obrigatório",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "E-mail inválido",
+              },
+            }}
             render={({ field: { onChange, value } }) => (
               <Input
                 placeholder="E-mail"
@@ -74,6 +97,8 @@ export default function SignUp() {
               />
             )}
           />
+
+          <Text color="white">{errors.email?.message}</Text>
 
           <Controller
             control={control}
