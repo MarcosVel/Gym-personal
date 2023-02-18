@@ -1,6 +1,8 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
 import { Center, Heading, Image, ScrollView, Text, VStack } from "native-base";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import * as yup from "yup";
 import Background from "../assets/background.png";
 import LogoSvg from "../assets/logo.svg";
 import Button from "../components/Button";
@@ -12,6 +14,19 @@ type FormDataProps = {
   password: string;
   password_confirm: string;
 };
+
+const signUpSchema = yup.object({
+  name: yup.string().required("Nome obrigatório"),
+  email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
+  password: yup
+    .string()
+    .required("Senha obrigatória")
+    .min(6, "A senha deve ter pelo menos 6 dígitos"),
+  password_confirm: yup
+    .string()
+    .required("Confirme a senha")
+    .oneOf([yup.ref("password"), null], "As senhas não coincidem"),
+});
 
 export default function SignUp() {
   const navigation = useNavigation();
@@ -26,6 +41,7 @@ export default function SignUp() {
       password: "",
       password_confirm: "",
     },
+    resolver: yupResolver(signUpSchema),
   });
 
   function handleSignUp({
@@ -67,9 +83,6 @@ export default function SignUp() {
           <Controller
             control={control}
             name="name"
-            rules={{
-              required: "Nome obrigatório",
-            }}
             render={({ field: { onChange, value } }) => (
               <Input
                 placeholder="Nome"
@@ -83,13 +96,6 @@ export default function SignUp() {
           <Controller
             control={control}
             name="email"
-            rules={{
-              required: "E-mail obrigatório",
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "E-mail inválido",
-              },
-            }}
             render={({ field: { onChange, value } }) => (
               <Input
                 placeholder="E-mail"
@@ -111,6 +117,7 @@ export default function SignUp() {
                 secureTextEntry
                 onChangeText={onChange}
                 value={value}
+                errorMessage={errors.password?.message}
               />
             )}
           />
@@ -126,6 +133,7 @@ export default function SignUp() {
                 value={value}
                 onSubmitEditing={handleSubmit(handleSignUp)}
                 returnKeyType="send"
+                errorMessage={errors.password_confirm?.message}
               />
             )}
           />
