@@ -1,12 +1,57 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
 import { Center, Heading, Image, ScrollView, Text, VStack } from "native-base";
+import { Controller, useForm } from "react-hook-form";
+import * as yup from "yup";
 import Background from "../assets/background.png";
 import LogoSvg from "../assets/logo.svg";
 import Button from "../components/Button";
 import Input from "../components/Input";
 
+type FormDataProps = {
+  name: string;
+  email: string;
+  password: string;
+  password_confirm: string;
+};
+
+const signUpSchema = yup.object({
+  name: yup.string().required("Nome obrigatório"),
+  email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
+  password: yup
+    .string()
+    .required("Senha obrigatória")
+    .min(6, "A senha deve ter pelo menos 6 dígitos"),
+  password_confirm: yup
+    .string()
+    .required("Confirme a senha")
+    .oneOf([yup.ref("password"), null], "As senhas não coincidem"),
+});
+
 export default function SignUp() {
   const navigation = useNavigation();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormDataProps>({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      password_confirm: "",
+    },
+    resolver: yupResolver(signUpSchema),
+  });
+
+  function handleSignUp({
+    name,
+    email,
+    password,
+    password_confirm,
+  }: FormDataProps) {
+    console.log({ name, email, password, password_confirm });
+  }
 
   return (
     <ScrollView
@@ -35,25 +80,74 @@ export default function SignUp() {
             Crie sua conta
           </Heading>
 
-          <Input placeholder="Nome" />
-
-          <Input
-            placeholder="E-mail"
-            keyboardType="email-address"
-            autoCapitalize="none"
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Nome"
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.name?.message}
+              />
+            )}
           />
 
-          <Input placeholder="Senha" secureTextEntry />
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="E-mail"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.email?.message}
+              />
+            )}
+          />
 
-          <Input placeholder="Confirme  a Senha" secureTextEntry />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Senha"
+                secureTextEntry
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.password?.message}
+              />
+            )}
+          />
 
-          <Button title="Criar e acessar" />
+          <Controller
+            control={control}
+            name="password_confirm"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Confirme a Senha"
+                secureTextEntry
+                onChangeText={onChange}
+                value={value}
+                onSubmitEditing={handleSubmit(handleSignUp)}
+                returnKeyType="send"
+                errorMessage={errors.password_confirm?.message}
+              />
+            )}
+          />
+
+          <Button
+            title="Criar e acessar"
+            onPress={handleSubmit(handleSignUp)}
+          />
         </Center>
 
         <Button
           title="Voltar para o login"
           variant="outline"
-          mt={24}
+          mt={8}
           onPress={() => navigation.goBack()}
         />
       </VStack>
