@@ -1,6 +1,14 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
-import { Center, Heading, Image, ScrollView, Text, VStack } from "native-base";
+import {
+  Center,
+  Heading,
+  Image,
+  ScrollView,
+  Text,
+  useToast,
+  VStack,
+} from "native-base";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import Background from "../assets/background.png";
@@ -30,6 +38,7 @@ const signUpSchema = yup.object({
 
 export default function SignUp() {
   const navigation = useNavigation();
+  const toast = useToast();
   const {
     control,
     handleSubmit,
@@ -44,13 +53,21 @@ export default function SignUp() {
     resolver: yupResolver(signUpSchema),
   });
 
-  function handleSignUp({
-    name,
-    email,
-    password,
-    password_confirm,
-  }: FormDataProps) {
-    console.log({ name, email, password, password_confirm });
+  async function handleSignUp({ name, email, password }: FormDataProps) {
+    const response = await fetch("http://192.168.56.1:3333/users", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const data = await response.json();
+
+    if (data.status === "error") {
+      return toast.show({ title: data.message, bgColor: "red.500" });
+    }
   }
 
   return (
