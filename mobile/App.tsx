@@ -6,7 +6,7 @@ import {
 import { NativeBaseProvider } from "native-base";
 import { StatusBar } from "react-native";
 import Loading from "./src/components/Loading";
-import { AuthContext } from "./src/contexts/AuthContext";
+import { AuthContextProvider } from "./src/contexts/AuthContext";
 import { Routes } from "./src/routes";
 import { THEME } from "./src/theme";
 
@@ -20,18 +20,9 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      <AuthContext.Provider
-        value={{
-          user: {
-            id: "1",
-            name: "John Doe",
-            email: "john@gmail.com",
-            avatar: "john.png",
-          },
-        }}
-      >
+      <AuthContextProvider>
         {fontsLoaded ? <Routes /> : <Loading />}
-      </AuthContext.Provider>
+      </AuthContextProvider>
     </NativeBaseProvider>
   );
 }
