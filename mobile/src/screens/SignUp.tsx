@@ -1,5 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import {
   Center,
   Heading,
@@ -15,6 +16,7 @@ import Background from "../assets/background.png";
 import LogoSvg from "../assets/logo.svg";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import { api } from "../services/api";
 
 type FormDataProps = {
   name: string;
@@ -54,19 +56,16 @@ export default function SignUp() {
   });
 
   async function handleSignUp({ name, email, password }: FormDataProps) {
-    const response = await fetch("http://192.168.56.1:3333/users", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
-
-    const data = await response.json();
-
-    if (data.status === "error") {
-      return toast.show({ title: data.message, bgColor: "red.500" });
+    try {
+      const response = await api.post("/users", { name, email, password });
+      console.log("response: ", response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return toast.show({
+          title: error.response?.data.message,
+          bgColor: "red.500",
+        });
+      }
     }
   }
 
