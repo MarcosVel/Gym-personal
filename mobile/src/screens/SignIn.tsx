@@ -5,6 +5,7 @@ import Background from "../assets/background.png";
 import LogoSvg from "../assets/logo.svg";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import useAuth from "../hooks/useAuth";
 import { AuthNavigatorRoutesProps } from "../routes/auth.routes";
 
 type FormDataProps = {
@@ -13,6 +14,7 @@ type FormDataProps = {
 };
 
 export default function SignIn() {
+  const { signIn } = useAuth();
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
   const {
     control,
@@ -20,8 +22,8 @@ export default function SignIn() {
     formState: { errors },
   } = useForm<FormDataProps>();
 
-  function handleSignIn({ email, password }: FormDataProps) {
-    console.log({ email, password });
+  async function handleSignIn({ email, password }: FormDataProps) {
+    await signIn(email, password);
   }
 
   return (
