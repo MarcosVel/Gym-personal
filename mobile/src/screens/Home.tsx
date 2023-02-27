@@ -1,19 +1,17 @@
 import { useNavigation } from "@react-navigation/native";
-import { FlatList, Heading, HStack, Text, VStack } from "native-base";
-import { useState } from "react";
+import { FlatList, Heading, HStack, Text, useToast, VStack } from "native-base";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ExerciseCard from "../components/ExerciseCard";
 import Group from "../components/Group";
 import Header from "../components/Header";
 import { AppNavigatorRoutesProps } from "../routes/app.routes";
+import { api } from "../services/api";
+import { AppError } from "../utils/AppError";
 
 export default function Home() {
-  const [groups, setGroups] = useState([
-    "costas",
-    "ombro",
-    "biceps",
-    "triceps",
-  ]);
+  const toast = useToast();
+  const [groups, setGroups] = useState<string[]>([]);
   const [groupSelected, setGroupSelected] = useState("costas");
   const [exercises, setExercises] = useState([
     "Puxada frontal",
@@ -27,6 +25,27 @@ export default function Home() {
   function handleOpenExerciseDetails() {
     navigation.navigate("exercise");
   }
+
+  async function fetchGroups() {
+    try {
+      const { data } = await api.get("/groups");
+      setGroups(data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível carregar os grupos.";
+
+      toast.show({
+        title,
+        bgColor: "red.500",
+      });
+    }
+  }
+
+  useEffect(() => {
+    fetchGroups();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
