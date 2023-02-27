@@ -9,12 +9,14 @@ import {
   useToast,
   VStack,
 } from "native-base";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import Background from "../assets/background.png";
 import LogoSvg from "../assets/logo.svg";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import useAuth from "../hooks/useAuth";
 import { api } from "../services/api";
 import { AppError } from "../utils/AppError";
 
@@ -41,6 +43,7 @@ const signUpSchema = yup.object({
 export default function SignUp() {
   const navigation = useNavigation();
   const toast = useToast();
+  const { signIn } = useAuth();
   const {
     control,
     handleSubmit,
@@ -54,11 +57,14 @@ export default function SignUp() {
     },
     resolver: yupResolver(signUpSchema),
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSignUp({ name, email, password }: FormDataProps) {
     try {
-      const response = await api.post("/users", { name, email, password });
-      console.log("response: ", response.data);
+      setIsLoading(true);
+
+      await api.post("/users", { name, email, password });
+      await signIn(email, password);
     } catch (error) {
       const isAppError = error instanceof AppError;
       const title = isAppError
@@ -69,6 +75,8 @@ export default function SignUp() {
         title,
         bgColor: "red.500",
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -160,6 +168,7 @@ export default function SignUp() {
           <Button
             title="Criar e acessar"
             onPress={handleSubmit(handleSignUp)}
+            isLoading={isLoading}
           />
         </Center>
 
