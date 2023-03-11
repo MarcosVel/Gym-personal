@@ -1,10 +1,11 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { FlatList, Heading, HStack, Text, useToast, VStack } from "native-base";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ExerciseCard from "../components/ExerciseCard";
 import Group from "../components/Group";
 import Header from "../components/Header";
+import { ExerciseDTO } from "../dto/ExerciseDTO";
 import { AppNavigatorRoutesProps } from "../routes/app.routes";
 import { api } from "../services/api";
 import { AppError } from "../utils/AppError";
@@ -13,12 +14,7 @@ export default function Home() {
   const toast = useToast();
   const [groups, setGroups] = useState<string[]>([]);
   const [groupSelected, setGroupSelected] = useState("costas");
-  const [exercises, setExercises] = useState([
-    "Puxada frontal",
-    "Remada curvada",
-    "Remada unilateral",
-    "Levantamento terra",
-  ]);
+  const [exercises, setExercises] = useState<ExerciseDTO[]>([]);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
@@ -43,9 +39,32 @@ export default function Home() {
     }
   }
 
+  async function fetchExercisesByGroup() {
+    try {
+      const { data } = await api.get(`/exercises/bygroup/${groupSelected}`);
+      setExercises(data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível carregar os exercícios.";
+
+      toast.show({
+        title,
+        bgColor: "red.500",
+      });
+    }
+  }
+
   useEffect(() => {
     fetchGroups();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchExercisesByGroup();
+    }, [groupSelected])
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -77,15 +96,15 @@ export default function Home() {
               Exercícios
             </Heading>
             <Text color="gray.200" fontSize="sm">
-              4
+              {exercises.length || 0}
             </Text>
           </HStack>
 
           <FlatList
             data={exercises}
-            keyExtractor={(item, index) => item + index}
+            keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => (
-              <ExerciseCard title={item} onPress={handleOpenExerciseDetails} />
+              <ExerciseCard data={item} onPress={handleOpenExerciseDetails} />
             )}
             contentContainerStyle={{ paddingBottom: 24 }}
             showsVerticalScrollIndicator={false}
