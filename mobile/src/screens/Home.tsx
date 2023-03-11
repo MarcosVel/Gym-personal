@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ExerciseCard from "../components/ExerciseCard";
 import Group from "../components/Group";
 import Header from "../components/Header";
+import Loading from "../components/Loading";
 import { ExerciseDTO } from "../dto/ExerciseDTO";
 import { AppNavigatorRoutesProps } from "../routes/app.routes";
 import { api } from "../services/api";
@@ -15,6 +16,7 @@ export default function Home() {
   const [groups, setGroups] = useState<string[]>([]);
   const [groupSelected, setGroupSelected] = useState("costas");
   const [exercises, setExercises] = useState<ExerciseDTO[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
@@ -41,6 +43,8 @@ export default function Home() {
 
   async function fetchExercisesByGroup() {
     try {
+      setIsLoading(true);
+
       const { data } = await api.get(`/exercises/bygroup/${groupSelected}`);
       setExercises(data);
     } catch (error) {
@@ -53,6 +57,8 @@ export default function Home() {
         title,
         bgColor: "red.500",
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -90,26 +96,30 @@ export default function Home() {
           maxH={10}
         />
 
-        <VStack flex={1} px={8}>
-          <HStack justifyContent="space-between" mb={5}>
-            <Heading color="gray.200" fontSize="md" fontFamily="heading">
-              Exercícios
-            </Heading>
-            <Text color="gray.200" fontSize="sm">
-              {exercises.length || 0}
-            </Text>
-          </HStack>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <VStack flex={1} px={8}>
+            <HStack justifyContent="space-between" mb={5}>
+              <Heading color="gray.200" fontSize="md" fontFamily="heading">
+                Exercícios
+              </Heading>
+              <Text color="gray.200" fontSize="sm">
+                {exercises.length || 0}
+              </Text>
+            </HStack>
 
-          <FlatList
-            data={exercises}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => (
-              <ExerciseCard data={item} onPress={handleOpenExerciseDetails} />
-            )}
-            contentContainerStyle={{ paddingBottom: 24 }}
-            showsVerticalScrollIndicator={false}
-          />
-        </VStack>
+            <FlatList
+              data={exercises}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({ item }) => (
+                <ExerciseCard data={item} onPress={handleOpenExerciseDetails} />
+              )}
+              contentContainerStyle={{ paddingBottom: 24 }}
+              showsVerticalScrollIndicator={false}
+            />
+          </VStack>
+        )}
       </VStack>
     </SafeAreaView>
   );
