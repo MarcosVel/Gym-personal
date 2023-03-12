@@ -14,14 +14,14 @@ import { AppError } from "../utils/AppError";
 export default function Home() {
   const toast = useToast();
   const [groups, setGroups] = useState<string[]>([]);
-  const [groupSelected, setGroupSelected] = useState("costas");
+  const [groupSelected, setGroupSelected] = useState("antebraço");
   const [exercises, setExercises] = useState<ExerciseDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
-  function handleOpenExerciseDetails() {
-    navigation.navigate("exercise");
+  function handleOpenExerciseDetails(exerciseId: string) {
+    navigation.navigate("exercise", { exerciseId });
   }
 
   async function fetchGroups() {
@@ -113,7 +113,10 @@ export default function Home() {
               data={exercises}
               keyExtractor={item => item.id.toString()}
               renderItem={({ item }) => (
-                <ExerciseCard data={item} onPress={handleOpenExerciseDetails} />
+                <ExerciseCard
+                  data={item}
+                  onPress={() => handleOpenExerciseDetails(item.id.toString())}
+                />
               )}
               contentContainerStyle={{ paddingBottom: 24 }}
               showsVerticalScrollIndicator={false}
