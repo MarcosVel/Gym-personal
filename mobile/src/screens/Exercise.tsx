@@ -34,6 +34,7 @@ export default function Exercise() {
   const toast = useToast();
   const [exercise, setExercise] = useState<ExerciseDTO>({} as ExerciseDTO);
   const [isLoading, setIsLoading] = useState(true);
+  const [submittingExercise, setSubmittingExercise] = useState(false);
 
   const { exerciseId } = route.params as RouteParamsProps;
 
@@ -55,6 +56,31 @@ export default function Exercise() {
       toast.show({ title, bgColor: "red.500" });
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleExerciseHistoryRegister() {
+    try {
+      setSubmittingExercise(true);
+
+      await api.post("/history", { exercise_id: exerciseId });
+
+      toast.show({
+        title: "Parabéns! Exercício concluído.",
+        placement: "top",
+        bgColor: "green.700",
+      });
+
+      navigation.navigate("history");
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível concluir o exercício";
+
+      toast.show({ title, bgColor: "red.500" });
+    } finally {
+      setSubmittingExercise(false);
     }
   }
 
@@ -135,7 +161,11 @@ export default function Exercise() {
                 </HStack>
               </HStack>
 
-              <Button title="Marcar como realizado" />
+              <Button
+                title="Marcar como realizado"
+                isLoading={submittingExercise}
+                onPress={handleExerciseHistoryRegister}
+              />
             </Box>
           </ScrollView>
         )}
