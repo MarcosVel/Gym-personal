@@ -1,3 +1,4 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -13,6 +14,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as yup from "yup";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import ScreenHeader from "../components/ScreenHeader";
@@ -29,6 +31,25 @@ type FormDataProps = {
   confirm_password: string;
 };
 
+const profileSchema = yup.object({
+  name: yup.string().required("Nome obrigatório"),
+  password: yup
+    .string()
+    .min(6, "Mínimo de 6 caracteres")
+    .nullable()
+    .transform(value => (!!value ? value : null)),
+  confirm_password: yup
+    .string()
+    .nullable()
+    .transform(value => (!!value ? value : null))
+    .oneOf([yup.ref("password"), null], "As senhas não conferem")
+    .when("password", {
+      is: (Field: any) => Field,
+      then: schema =>
+        schema.nullable().required("Confirmação de senha obrigatória"),
+    }),
+});
+
 export default function Profile() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
   const [userPhoto, setUserPhoto] = useState(
@@ -36,8 +57,16 @@ export default function Profile() {
   );
   const toast = useToast();
   const { user } = useAuth();
-  const { control } = useForm<FormDataProps>({
-    defaultValues: { name: user.name, email: user.email },
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormDataProps>({
+    defaultValues: {
+      name: user.name,
+      email: user.email,
+    },
+    resolver: yupResolver(profileSchema),
   });
 
   async function handleUserPhotoSelect() {
@@ -75,6 +104,10 @@ export default function Profile() {
     } finally {
       setPhotoIsLoading(false);
     }
+  }
+
+  async function handleProfileUpdate(data: FormDataProps) {
+    console.log(data);
   }
 
   return (
@@ -125,6 +158,7 @@ export default function Profile() {
                   }}
                   onChangeText={onChange}
                   value={value}
+                  errorMessage={errors.name?.message}
                 />
               )}
             />
@@ -174,6 +208,7 @@ export default function Profile() {
                   bg="gray.600"
                   secureTextEntry
                   onChangeText={onChange}
+                  errorMessage={errors.password?.message}
                 />
               )}
             />
@@ -187,11 +222,16 @@ export default function Profile() {
                   bg="gray.600"
                   secureTextEntry
                   onChangeText={onChange}
+                  errorMessage={errors.confirm_password?.message}
                 />
               )}
             />
 
-            <Button title="Atualizar" mt={4} />
+            <Button
+              title="Atualizar"
+              mt={4}
+              onPress={handleSubmit(handleProfileUpdate)}
+            />
           </VStack>
         </ScrollView>
       </VStack>
