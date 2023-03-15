@@ -1,3 +1,5 @@
+import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 import {
   Center,
   Heading,
@@ -8,16 +10,24 @@ import {
   VStack,
 } from "native-base";
 import { useState } from "react";
-import { Alert, TouchableOpacity } from "react-native";
+import { Controller, useForm } from "react-hook-form";
+import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import ScreenHeader from "../components/ScreenHeader";
 import UserPhoto from "../components/UserPhoto";
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
+import useAuth from "../hooks/useAuth";
 
 const PHOTO_SIZE = 33;
+
+type FormDataProps = {
+  name: string;
+  email: string;
+  password: string;
+  old_password: string;
+  confirm_password: string;
+};
 
 export default function Profile() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
@@ -25,6 +35,10 @@ export default function Profile() {
     "https://github.com/MarcosVel.png"
   );
   const toast = useToast();
+  const { user } = useAuth();
+  const { control } = useForm<FormDataProps>({
+    defaultValues: { name: user.name, email: user.email },
+  });
 
   async function handleUserPhotoSelect() {
     try {
@@ -98,23 +112,38 @@ export default function Profile() {
               </Text>
             </TouchableOpacity>
 
-            <Input
-              placeholder="Nome"
-              bg="gray.600"
-              _focus={{
-                bg: "gray.600",
-                borderColor: "green.500",
-              }}
+            <Controller
+              control={control}
+              name="name"
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  placeholder="Nome"
+                  bg="gray.600"
+                  _focus={{
+                    bg: "gray.600",
+                    borderColor: "green.500",
+                  }}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
             />
 
-            <Input
-              placeholder="E-mail"
-              bg="gray.600"
-              _focus={{
-                bg: "gray.600",
-                borderColor: "green.500",
-              }}
-              isDisabled
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { value } }) => (
+                <Input
+                  placeholder="E-mail"
+                  bg="gray.600"
+                  _focus={{
+                    bg: "gray.600",
+                    borderColor: "green.500",
+                  }}
+                  isDisabled
+                  value={value}
+                />
+              )}
             />
           </Center>
 
@@ -123,12 +152,43 @@ export default function Profile() {
               Alterar senha
             </Heading>
 
-            <Input placeholder="Senha antiga" bg="gray.600" secureTextEntry />
-            <Input placeholder="Senha nova" bg="gray.600" secureTextEntry />
-            <Input
-              placeholder="Confirme nova senha"
-              bg="gray.600"
-              secureTextEntry
+            <Controller
+              control={control}
+              name="old_password"
+              render={({ field: { onChange } }) => (
+                <Input
+                  placeholder="Senha antiga"
+                  bg="gray.600"
+                  secureTextEntry
+                  onChangeText={onChange}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange } }) => (
+                <Input
+                  placeholder="Senha nova"
+                  bg="gray.600"
+                  secureTextEntry
+                  onChangeText={onChange}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="confirm_password"
+              render={({ field: { onChange } }) => (
+                <Input
+                  placeholder="Confirme nova senha"
+                  bg="gray.600"
+                  secureTextEntry
+                  onChangeText={onChange}
+                />
+              )}
             />
 
             <Button title="Atualizar" mt={4} />
