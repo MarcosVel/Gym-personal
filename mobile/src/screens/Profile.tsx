@@ -20,6 +20,8 @@ import Input from "../components/Input";
 import ScreenHeader from "../components/ScreenHeader";
 import UserPhoto from "../components/UserPhoto";
 import useAuth from "../hooks/useAuth";
+import { api } from "../services/api";
+import { AppError } from "../utils/AppError";
 
 const PHOTO_SIZE = 33;
 
@@ -55,6 +57,8 @@ export default function Profile() {
   const [userPhoto, setUserPhoto] = useState(
     "https://github.com/MarcosVel.png"
   );
+  const [isUpdating, setIsUpdating] = useState(false);
+
   const toast = useToast();
   const { user } = useAuth();
   const {
@@ -107,7 +111,28 @@ export default function Profile() {
   }
 
   async function handleProfileUpdate(data: FormDataProps) {
-    console.log(data);
+    try {
+      setIsUpdating(true);
+
+      await api.put("/users", data);
+
+      toast.show({
+        title: "Perfil atualizado com sucesso!",
+        placement: "top",
+        bgColor: "green.500",
+      });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError ? error.message : "Erro ao atualizar o perfil";
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   }
 
   return (
@@ -230,6 +255,7 @@ export default function Profile() {
             <Button
               title="Atualizar"
               mt={4}
+              isLoading={isUpdating}
               onPress={handleSubmit(handleProfileUpdate)}
             />
           </VStack>
