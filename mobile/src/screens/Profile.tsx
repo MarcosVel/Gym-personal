@@ -100,6 +100,30 @@ export default function Profile() {
           });
         }
 
+        const fileExtentension = photoSelected.assets[0].uri.split(".").pop();
+
+        const photoFile = {
+          name: `${user.name}.${fileExtentension}`
+            .toLowerCase()
+            .replace(/\s/g, ""),
+          uri: photoSelected.assets[0].uri,
+          type: `${photoSelected.assets[0].type}/${fileExtentension}`,
+        } as any;
+
+        const userPhotoUploadForm = new FormData();
+        userPhotoUploadForm.append("avatar", photoFile);
+
+        await api.patch("/users/avatar", userPhotoUploadForm, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        toast.show({
+          title: "Foto atualizada!",
+          bgColor: "green.500",
+        });
+
         setUserPhoto(photoSelected.assets[0].uri);
       }
     } catch (error) {
