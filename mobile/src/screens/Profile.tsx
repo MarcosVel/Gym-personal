@@ -15,6 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
+import defaultUserPhoto from "../assets/userPhotoDefault.png";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import ScreenHeader from "../components/ScreenHeader";
@@ -53,12 +54,6 @@ const profileSchema = yup.object({
 });
 
 export default function Profile() {
-  const [photoIsLoading, setPhotoIsLoading] = useState(false);
-  const [userPhoto, setUserPhoto] = useState(
-    "https://github.com/MarcosVel.png"
-  );
-  const [isUpdating, setIsUpdating] = useState(false);
-
   const toast = useToast();
   const { user, updateUserProfile } = useAuth();
   const {
@@ -72,6 +67,9 @@ export default function Profile() {
     },
     resolver: yupResolver(profileSchema),
   });
+
+  const [photoIsLoading, setPhotoIsLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   async function handleUserPhotoSelect() {
     try {
@@ -100,7 +98,37 @@ export default function Profile() {
           });
         }
 
-        setUserPhoto(photoSelected.assets[0].uri);
+        const fileExtentension = photoSelected.assets[0].uri.split(".").pop();
+
+        const photoFile = {
+          name: `${user.name}.${fileExtentension}`
+            .toLowerCase()
+            .replace(/\s/g, ""),
+          uri: photoSelected.assets[0].uri,
+          type: `${photoSelected.assets[0].type}/${fileExtentension}`,
+        } as any;
+
+        const userPhotoUploadForm = new FormData();
+        userPhotoUploadForm.append("avatar", photoFile);
+
+        const avatarUpdatedResponse = await api.patch(
+          "/users/avatar",
+          userPhotoUploadForm,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        toast.show({
+          title: "Foto atualizada!",
+          bgColor: "green.500",
+        });
+
+        const userUpdated = user;
+        userUpdated.avatar = avatarUpdatedResponse.data.avatar;
+        await updateUserProfile(userUpdated);
       }
     } catch (error) {
       console.log("Error in handleUserPhotoSelect: ", error);
@@ -157,7 +185,11 @@ export default function Profile() {
               />
             ) : (
               <UserPhoto
-                source={{ uri: userPhoto }}
+                source={
+                  user.avatar
+                    ? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }
+                    : defaultUserPhoto
+                }
                 alt="User photo"
                 size={PHOTO_SIZE}
               />
