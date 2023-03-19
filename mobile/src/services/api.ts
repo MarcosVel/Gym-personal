@@ -45,9 +45,9 @@ api.registerInteceptTokenManager = signOut => {
             return new Promise((resolve, reject) => {
               failedQueue.push({
                 onSuccess: (token: string) => {
-                  originalRequestConfig.headers[
-                    "Authorization"
-                  ] = `Bearer ${token}`;
+                  originalRequestConfig.headers = {
+                    Authorization: `Bearer ${token}`,
+                  };
                   resolve(api(originalRequestConfig));
                 },
                 onFailure: (error: AxiosError) => {
@@ -65,6 +65,27 @@ api.registerInteceptTokenManager = signOut => {
                 refresh_token,
               });
               await storageAuthTokenSave(data.token, data.refresh_token);
+
+              console.log(originalRequestConfig);
+
+              if (originalRequestConfig.data) {
+                originalRequestConfig.data = JSON.parse(
+                  originalRequestConfig.data
+                );
+              }
+
+              originalRequestConfig.headers = {
+                Authorization: `Bearer ${data.token}`,
+              };
+              api.defaults.headers.common[
+                "Authorization"
+              ] = `Bearer ${data.token}`;
+
+              failedQueue.forEach(request => request.onSuccess(data.token));
+
+              console.log("token refreshed");
+
+              resolve(api(originalRequestConfig));
             } catch (error: any) {
               failedQueue.forEach(request => request.onFailure(error));
 
