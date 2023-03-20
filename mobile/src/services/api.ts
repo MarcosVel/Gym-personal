@@ -66,8 +66,6 @@ api.registerInteceptTokenManager = signOut => {
               });
               await storageAuthTokenSave(data.token, data.refresh_token);
 
-              console.log(originalRequestConfig);
-
               if (originalRequestConfig.data) {
                 originalRequestConfig.data = JSON.parse(
                   originalRequestConfig.data
@@ -82,8 +80,6 @@ api.registerInteceptTokenManager = signOut => {
               ] = `Bearer ${data.token}`;
 
               failedQueue.forEach(request => request.onSuccess(data.token));
-
-              console.log("token refreshed");
 
               resolve(api(originalRequestConfig));
             } catch (error: any) {
