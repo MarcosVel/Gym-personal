@@ -85,15 +85,15 @@ export default function SignUp() {
       contentContainerStyle={{ flexGrow: 1 }}
       showsVerticalScrollIndicator={false}
     >
-      <VStack flex={1} px={10} pb={16}>
-        <Image
-          source={Background}
-          defaultSource={Background}
-          alt="Background pessoas treinando"
-          position="absolute"
-          resizeMode="contain"
-        />
+      <Image
+        source={Background}
+        defaultSource={Background}
+        alt="Background pessoas treinando"
+        position="absolute"
+        resizeMode="contain"
+      />
 
+      <VStack flex={1} px={10} pb={16}>
         <Center mt={24} mb={16}>
           <LogoSvg />
 
@@ -102,7 +102,7 @@ export default function SignUp() {
           </Text>
         </Center>
 
-        <Center>
+        <Center mt={"auto"}>
           <Heading color="gray.100" fontSize="xl" mb={6} fontFamily="heading">
             Crie sua conta
           </Heading>

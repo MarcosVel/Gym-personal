@@ -11,7 +11,10 @@ import { Routes } from "./src/routes";
 import { THEME } from "./src/theme";
 
 export default function App() {
-  const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_700Bold,
+  });
 
   return (
     <NativeBaseProvider theme={THEME}>

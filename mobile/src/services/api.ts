@@ -17,7 +17,7 @@ type APIInstanceProps = AxiosInstance & {
 };
 
 const api = axios.create({
-  baseURL: "http://192.168.56.1:3333",
+  baseURL: "http://192.168.0.71:3333",
 }) as APIInstanceProps;
 
 let failedQueue: Array<PromiseType> = [];
@@ -28,6 +28,8 @@ api.registerInteceptTokenManager = signOut => {
     response => response,
     async requestError => {
       if (requestError?.response?.status === 401) {
+        console.log('requestError?.response?', requestError?.response);
+        
         if (
           requestError.response.data?.message === "token.expired" ||
           requestError.response.data?.message === "token.invalid"
