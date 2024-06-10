@@ -23,7 +23,7 @@ To run with a physical device
 ## Run with expo-dev-clint
 
 ```bash
-  npx expo start --dev-client
+  yarn start
 ```
 
 ## List schemes
