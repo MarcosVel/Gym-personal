@@ -1,5 +1,10 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { UserDTO } from "../dto/UserDTO";
+import {
+  userDaysWithoutTrainingTag,
+  userIsLogged,
+  userNameTag,
+} from "../notifications/tags";
 import { api } from "../services/api";
 import {
   storageAuthTokenGet,
@@ -97,9 +102,28 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
+  async function handleTags() {
+    try {
+      if (Object.keys(user).length !== 0) {
+        userNameTag(user.name);
+        userDaysWithoutTrainingTag();
+        userIsLogged(true);
+        return;
+      }
+
+      userIsLogged(false);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   useEffect(() => {
     loadUserData();
   }, []);
+
+  useEffect(() => {
+    handleTags();
+  }, [user]);
 
   useEffect(() => {
     const subscribe = api.registerInterceptTokenManager(signOut);
