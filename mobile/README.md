@@ -14,6 +14,12 @@ To run with a physical device
   adb connect deviceip:5555
 ```
 
+## After a lib installation to apply changes on the native code
+
+```bash
+  npx expo prebuild
+```
+
 ## Install app on device and run
 
 ```bash
@@ -35,11 +41,11 @@ To run with a physical device
 run test on android
 
 ```bash
-  npx uri-scheme open igniteshoes://<deviceip>:8081 --android
+  npx uri-scheme open ignitegym://<deviceip>:8081 --android
 ```
 
 testing navigation of deep link
 
 ```bash
-  npx uri-scheme open igniteshoes://details/7 --android
+  npx uri-scheme open ignitegym://details/7 --android
 ```

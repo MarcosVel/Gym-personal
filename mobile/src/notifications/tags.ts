@@ -6,12 +6,13 @@ export function userNameTag(name: string) {
 }
 
 export function userIsLogged(isLogged: boolean) {
-  console.log("user is logged", isLogged);
   OneSignal.User.addTag("user_is_logged", isLogged.toString());
 }
 
 export async function userDaysWithoutTrainingTag() {
   const { data } = await api.get("/history");
+
+  if (!data) return;
 
   function parseDate(lastTrainingDate: string): Date {
     let [day, month, year] = lastTrainingDate.split(".").map(Number);

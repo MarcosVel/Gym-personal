@@ -70,7 +70,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       const { token } = await storageAuthTokenGet();
 
       if (token && userLogged) {
-        userAndTokenUpdate(userLogged, token);
+        userAndTokenUpdate(userLogged, token).then(async () => {
+          await userDaysWithoutTrainingTag();
+        });
       }
     } catch (error) {
       throw error;
@@ -106,7 +108,6 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     try {
       if (Object.keys(user).length !== 0) {
         userNameTag(user.name);
-        userDaysWithoutTrainingTag();
         userIsLogged(true);
         return;
       }
