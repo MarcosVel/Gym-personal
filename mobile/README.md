@@ -47,5 +47,9 @@ run test on android
 testing navigation of deep link
 
 ```bash
-  npx uri-scheme open ignitegym://details/7 --android
+  npx uri-scheme open ignitegym://login --android
+```
+
+```bash
+  npx uri-scheme open ignitegym://exercise/16 --android
 ```
