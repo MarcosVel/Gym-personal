@@ -2,14 +2,14 @@ import { Feather } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   Box,
-  Heading,
   HStack,
+  Heading,
   Icon,
   Image,
   ScrollView,
   Text,
-  useToast,
   VStack,
+  useToast,
 } from "native-base";
 import { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
@@ -20,6 +20,7 @@ import SeriesSvg from "../assets/series.svg";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
 import { ExerciseDTO } from "../dto/ExerciseDTO";
+import { userDaysWithoutTrainingTag } from "../notifications/tags";
 import { AppNavigatorRoutesProps } from "../routes/app.routes";
 import { api } from "../services/api";
 import { AppError } from "../utils/AppError";
@@ -46,6 +47,13 @@ export default function Exercise() {
     try {
       setIsLoading(true);
       const response = await api.get(`/exercises/${exerciseId}`);
+      console.log("response", response);
+
+      // in case of the exercise deep link has a wrong id
+      if (!response.data) {
+        return navigation.navigate("notFound");
+      }
+
       setExercise(response.data);
     } catch (error) {
       const isAppError = error instanceof AppError;
@@ -70,6 +78,8 @@ export default function Exercise() {
         placement: "top",
         bgColor: "green.700",
       });
+
+      userDaysWithoutTrainingTag();
 
       navigation.navigate("history");
     } catch (error) {

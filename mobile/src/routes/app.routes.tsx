@@ -12,6 +12,7 @@ import ProfileSvg from "../assets/profile.svg";
 import Exercise from "../screens/Exercise";
 import History from "../screens/History";
 import Home from "../screens/Home";
+import NotFound from "../screens/NotFound";
 import Profile from "../screens/Profile";
 
 type AppRoutes = {
@@ -19,6 +20,7 @@ type AppRoutes = {
   exercise: { exerciseId: string };
   history: undefined;
   profile: undefined;
+  notFound: undefined;
 };
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
@@ -78,6 +80,12 @@ export function AppRoutes() {
       <Screen
         name="exercise"
         component={Exercise}
+        options={{ tabBarButton: () => null }}
+      />
+
+      <Screen
+        name="notFound"
+        component={NotFound}
         options={{ tabBarButton: () => null }}
       />
     </Navigator>

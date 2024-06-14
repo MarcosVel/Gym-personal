@@ -5,6 +5,24 @@ import useAuth from "../hooks/useAuth";
 import { AppRoutes } from "./app.routes";
 import { AuthRoutes } from "./auth.routes";
 
+const linking = {
+  prefixes: ["ignitegym://", "com.ignitegym://"],
+  config: {
+    screens: {
+      signIn: {
+        path: "login",
+      },
+      exercise: {
+        path: "exercise/:exerciseId",
+        parse: {
+          exerciseId: (exerciseId: string) => exerciseId,
+        },
+      },
+      notFound: "*",
+    },
+  },
+};
+
 export function Routes() {
   const { colors } = useTheme();
   const { user, isLoadingUserStorage } = useAuth();
@@ -18,7 +36,11 @@ export function Routes() {
 
   return (
     <Box flex={1} bg="gray.700">
-      <NavigationContainer theme={theme}>
+      <NavigationContainer
+        theme={theme}
+        linking={linking}
+        fallback={<Loading />}
+      >
         {user.id ? <AppRoutes /> : <AuthRoutes />}
       </NavigationContainer>
     </Box>
