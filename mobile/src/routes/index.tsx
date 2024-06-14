@@ -18,6 +18,7 @@ const linking = {
           exerciseId: (exerciseId: string) => exerciseId,
         },
       },
+      notFound: "*",
     },
   },
 };

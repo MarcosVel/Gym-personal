@@ -47,6 +47,13 @@ export default function Exercise() {
     try {
       setIsLoading(true);
       const response = await api.get(`/exercises/${exerciseId}`);
+      console.log("response", response);
+
+      // in case of the exercise deep link has a wrong id
+      if (!response.data) {
+        return navigation.navigate("notFound");
+      }
+
       setExercise(response.data);
     } catch (error) {
       const isAppError = error instanceof AppError;
